@@ -2,6 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-8HC1HO3s1E2KOcACZDBiLl3NQPymqoNZ5xS7fHawh4pypu5BzpA/YF6q5kwzWMd8bN5pA+SXypT2TrgwlO9Irw==" crossorigin="anonymous" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
@@ -25,6 +27,17 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          }).catch((error) => {
+            console.error('Service Worker registration failed:', error);
+          });
+        });
+      }
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

@@ -1,4 +1,5 @@
 // Weather.js
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Weather.css';
@@ -11,12 +12,14 @@ const SearchBar = ({ fetchWeather }) => {
   const handleSearch = () => {
     fetchWeather(searchQuery);
   };
+
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       document.getElementById('srchBtn').click();
     }
   };
+
   return (
     <div className="search-bar">
       <input
@@ -26,7 +29,9 @@ const SearchBar = ({ fetchWeather }) => {
         onChange={(e) => setSearchQuery(e.target.value)}
         onKeyPress={handleKeyPress}
       />
-      <button id="srchBtn" onClick={handleSearch}>Search</button>
+      <button id="srchBtn" onClick={handleSearch}>
+        Search
+      </button>
     </div>
   );
 };
@@ -50,52 +55,22 @@ function Weather() {
     fetchWeather('Iligan');
   }, []);
 
-  const getWeatherIcon = (weatherCode) => {
-    switch (weatherCode) {
-      case '01d':
-        return 'clear-sky-day.png';
-      case '01n':
-        return 'clear-sky-night.png';
-      case '02d':
-        return 'few-clouds-day.png';
-      case '02n':
-        return 'few-clouds-night.png';
-
-      default:
-        return null;
-    }
-  };
-
   if (!weather) {
     return <div className="loading">Loading...</div>;
   }
 
-  const weatherIcon = getWeatherIcon(weather.weather[0].icon);
-
-  const { main } = weather;
-  const temperature = Math.round(main.temp);
-
   return (
     <div className="weather-container">
-      <div className="logo">
-        <img src="logoweather.png" alt="Logo" />
-      </div>
-      <SearchBar fetchWeather={fetchWeather} />
-      <div
-        className="background-image"
-        style={{
-          backgroundImage: `url(${weatherIcon || 'few-clouds-night.png'})`,
-        }}
-      ></div>
-      <div className="weather-content">
-        <p className="time">{weather.time}</p>
-        <h1 className="city">Iligan City Weather Forecast</h1>
-        <p className="temperature">
-          Temperature: {temperature} °c
-        </p>
-        {weather.weather[0].description && (
-          <p className="weather-condition">{weather.weather[0].description}</p>
-        )}
+      <div className="card">
+        <div className="background-image">
+          <img src="logoweather.png" alt="Weather Logo" className="logo" loading="lazy" />
+          <div className="overlay">
+            <h1 className="city">{weather.name}</h1>
+            <h2 className="temperature">{Math.round(weather.main.temp)}°C</h2>
+            <h3 className="weather-condition">{weather.weather[0].description}</h3>
+          </div>
+        </div>
+        <SearchBar fetchWeather={fetchWeather} />
       </div>
     </div>
   );

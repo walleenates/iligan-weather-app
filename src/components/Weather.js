@@ -1,45 +1,65 @@
 // Weather.js
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "./Weather.css";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './Weather.css';
 
-const apiKey = "c51eb163b2bb6284a6158ba26245a147";
+const apiKey = 'c51eb163b2bb6284a6158ba26245a147';
+
+const SearchBar = ({ fetchWeather }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = () => {
+    fetchWeather(searchQuery);
+  };
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      document.getElementById('srchBtn').click();
+    }
+  };
+  return (
+    <div className="search-bar">
+      <input
+        type="text"
+        placeholder="Enter barangay in Iligan City"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        onKeyPress={handleKeyPress}
+      />
+      <button id="srchBtn" onClick={handleSearch}>Search</button>
+    </div>
+  );
+};
 
 function Weather() {
-  const [searchQuery, setSearchQuery] = useState("Iligan");
   const [weather, setWeather] = useState(null);
-
-  const handleSearchChange = (event) => {
-    const { value } = event.target;
-    setSearchQuery(value);
-  };
 
   const fetchWeather = async (location) => {
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`
+        `https://api.openweathermap.org/data/2.5/weather?q=${location},IliganCity&appid=${apiKey}&units=metric`
       );
-      console.log("API Response:", response.data);
+      console.log('API Response:', response.data);
       setWeather(response.data);
     } catch (error) {
-      console.error("Error fetching weather data:", error);
+      console.error('Error fetching weather data:', error);
     }
   };
 
   useEffect(() => {
-    fetchWeather(searchQuery);
-  }, [searchQuery]);
+    fetchWeather('Iligan');
+  }, []);
 
   const getWeatherIcon = (weatherCode) => {
     switch (weatherCode) {
-      case "01d":
-        return "clear-sky-day.png";
-      case "01n":
-        return "clear-sky-night.png";
-      case "02d":
-        return "few-clouds-day.png";
-      case "02n":
-        return "few-clouds-night.png";
+      case '01d':
+        return 'clear-sky-day.png';
+      case '01n':
+        return 'clear-sky-night.png';
+      case '02d':
+        return 'few-clouds-day.png';
+      case '02n':
+        return 'few-clouds-night.png';
 
       default:
         return null;
@@ -52,34 +72,26 @@ function Weather() {
 
   const weatherIcon = getWeatherIcon(weather.weather[0].icon);
 
+  const { main } = weather;
+  const temperature = Math.round(main.temp);
+
   return (
     <div className="weather-container">
-      <div className="search-bar">
-        <input
-          className="input"
-          type="text"
-          placeholder="Enter city name"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-
-        <button onClick={() => fetchWeather(searchQuery)}>Search</button>
-      </div>
       <div className="logo">
         <img src="logoweather.png" alt="Logo" />
       </div>
-
+      <SearchBar fetchWeather={fetchWeather} />
       <div
         className="background-image"
         style={{
-          backgroundImage: `url(${weatherIcon || "few-clouds-night.png"})`,
+          backgroundImage: `url(${weatherIcon || 'few-clouds-night.png'})`,
         }}
       ></div>
       <div className="weather-content">
-        <p className="time">{new Date().toLocaleTimeString()}</p>
+        <p className="time">{weather.time}</p>
         <h1 className="city">Iligan City Weather Forecast</h1>
         <p className="temperature">
-          Temperature: {(weather.main.temp - 273.15).toFixed(2)} °C
+          Temperature: {temperature} °c
         </p>
         {weather.weather[0].description && (
           <p className="weather-condition">{weather.weather[0].description}</p>
